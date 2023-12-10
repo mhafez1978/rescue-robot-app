@@ -1,10 +1,10 @@
 import { getServerSession } from "next-auth";
-import { options } from "../../api/auth/[...nextauth]/options";
+import { options } from "../api/auth/[...nextauth]/options";
 import { redirect } from "next/navigation";
 import GetIP from "@/components/util/GetIP";
 import RobotImage from "@/components/RoboHash";
 
-const MemberProfile = async () => {
+const AdminPage = async () => {
   const session = await getServerSession(options);
 
   if (!session) {
@@ -43,9 +43,7 @@ const MemberProfile = async () => {
                     >
                       <RobotImage name={session.user?.name} />
                     </div>
-                    <h1 className="text-black font-semibold text-4xl">
-                      Profile
-                    </h1>
+                    <h1 className="text-black font-semibold text-4xl">Admin</h1>
                   </div>
                 </div>
                 <div className="w-1/2">
@@ -119,7 +117,7 @@ const MemberProfile = async () => {
                     />
                   </div>
                 )}
-                <h1 className="text-black font-semibold text-4xl">Profile</h1>
+                <h1 className="text-black font-semibold text-4xl">Admin</h1>
               </div>
               <div className="mt-8">
                 <p>
@@ -172,4 +170,4 @@ const MemberProfile = async () => {
   }
 };
 
-export default MemberProfile;
+export default AdminPage;

@@ -1,18 +1,21 @@
 import { getServerSession } from "next-auth";
 import { options } from "../../api/auth/[...nextauth]/options";
 import { redirect } from "next/navigation";
+import GetIP from "@/components/util/GetIP";
+import RobotImage from "@/components/RoboHash";
 
 const SettingsPage = async () => {
   const session = await getServerSession(options);
 
   if (!session) {
-    redirect("/api/auth/signin?callbackUrl=/member/settings");
+    redirect("/api/auth/signin?callbackUrl=/member/profile");
   }
   if (session.user?.role !== "admin") {
+    //console.log(session.user?.myuser?.phone)
     return (
       <>
         <div className="w-[100vw] h-[100vh] top-0 bottom-0 flex flex-row gap-x-4">
-          <div className="w-[20vw] bg-slate-600 text-slate-50">
+          <div className="w-[20vw] bg-slate-600 fixed top-0 bottom-0 text-slate-50">
             <div className="flex flex-col px-8 pt-[20vh] gap-y-2">
               <a href="/member/profile">Profile</a>
               <a href="/member/settings">Settings</a>
@@ -20,15 +23,122 @@ const SettingsPage = async () => {
               <a href="/api/auth/signout?callbackUrl=/">Logout</a>
             </div>
           </div>
+          <div className="w-[80vw] ml-[21vw] pt-[5vh]">
+            <div className="flex flex-col justify-center items-start">
+              <div className="w-full flex flex-row justify-between">
+                <div className="w-1/2 flex">
+                  <div className="flex flex-row justify-center items-center gap-x-2">
+                    {session.user?.image && (
+                      <div className="w-32 h-32 overflow-hidden">
+                        <img
+                          src={session.user?.image}
+                          alt="user image"
+                          className="rounded-full w-20 h-20"
+                        />
+                      </div>
+                    )}
+                    <div
+                      className="w-32 h-32 overflow-hidden"
+                      style={{ border: "1px solid red", borderRadius: "200px" }}
+                    >
+                      <RobotImage name={session.user?.name} />
+                    </div>
+                    <h1 className="text-black font-semibold text-4xl">
+                      Profile
+                    </h1>
+                  </div>
+                </div>
+                <div className="w-1/2">
+                  <div className="pt-4">
+                    <p>
+                      Welcome back,{" "}
+                      <span className="capitalize text-red-600">
+                        {session.user?.name}
+                      </span>{" "}
+                      <br />
+                      Your&apos;re assigned app role is set to:{" "}
+                      <span className="capitalize text-red-600">
+                        {" "}
+                        {session.user?.role}
+                      </span>{" "}
+                      <br />
+                      Your Phone Number is:{" "}
+                      <span className="text-red-600">
+                        {session.user?.phone}
+                      </span>
+                    </p>
+                    <p>
+                      Your current tracked IP Address is: <GetIP />
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="w-[80vw] mr-10 mt-12">
+              <div className="px-2">
+                <h2>Update your profile details here ...</h2>
+              </div>
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  } else {
+    return (
+      <>
+        <div className="w-[100vw] h-[100vh] top-0 bottom-0 flex flex-row gap-x-4">
+          <div className="w-[20vw] bg-slate-600 text-slate-50">
+            <div className="flex flex-col px-8 pt-[20vh] gap-y-2">
+              <a href="/member/profile">Profile</a>
+              <a href="/member/settings">Settings</a>
+              <a href="/admin">Admin</a>
+              <hr className="divider" />
+              <a href="/api/auth/signout?callbackUrl=/">Logout</a>
+            </div>
+          </div>
           <div className="w-[80vw] pt-[5vh]">
             <div className="flex flex-col justify-center items-start">
               <div className="flex flex-row justify-center items-center gap-x-2">
-                <img
-                  src={session.user?.image}
-                  alt="user image"
-                  className="rounded-full w-20 h-20"
-                />
-                <h1 className="text-black font-semibold text-4xl">Settings</h1>
+                {session.user?.image.length === 0 && (
+                  <div
+                    className="w-32 h-32 overflow-hidden"
+                    style={{ border: "1px solid red", borderRadius: "200px" }}
+                  >
+                    <RobotImage name={session.user?.name} />
+                  </div>
+                )}
+                {session.user?.image.length > 0 && (
+                  <div
+                    className="w-32 h-32 overflow-hidden"
+                    style={{ border: "1px solid red", borderRadius: "200px" }}
+                  >
+                    <img
+                      src={session.user?.image}
+                      alt="user image"
+                      className="rounded-full w-32 h-32"
+                    />
+                  </div>
+                )}
+                <h1 className="text-black font-semibold text-4xl">Profile</h1>
+              </div>
+              <div className="mt-8">
+                <p>
+                  Welcome back,{" "}
+                  <span className="text-red-500 capitalize">
+                    {session.user?.name}
+                  </span>{" "}
+                  <br />
+                  Your&apos;re logged in as{" "}
+                  <span className="text-red-500 capitalize">
+                    {session.user?.role}
+                  </span>{" "}
+                  <br />
+                  Your Phone Number is:{" "}
+                  <span className="text-red-500">{session.user?.phone}</span>
+                </p>
+                <p>
+                  Your IP Address is: <GetIP />
+                </p>
               </div>
               <div>
                 <table className="mt-4">
@@ -53,110 +163,6 @@ const SettingsPage = async () => {
                     </tr>
                   </tbody>
                 </table>
-              </div>
-            </div>
-          </div>
-        </div>
-      </>
-    );
-  } else {
-    return (
-      <>
-        <div className="w-[100vw] h-[100vh] flex flex-row">
-          <div className="w-[20vw] h-[100vh] bg-slate-100 text-slate-950 z-10">
-            <div className="flex flex-col px-8 pt-[20vh] gap-y-2">
-              <a href="/member/profile">Profile</a>
-              <a href="/member/settings">Settings</a>
-              <a href="/admin">Admin</a>
-              <hr className="divider" />
-              <a href="/api/auth/signout?callbackUrl=/">Logout</a>
-            </div>
-          </div>
-
-          <div className="flex flex-col">
-            <div className="w-[80vw] min-h-[10vh] flex flex-row">
-              <div className="w-[80vw]">
-                <div className="flex flex-col">
-                  <div className="flex flex-row justify-start items-center gap-4 py-4">
-                    <img
-                      src={session.user?.image}
-                      alt="user image"
-                      className="rounded-full w-20 h-20"
-                    />
-                    <h1 className="text-black font-semibold text-4xl">
-                      Settings
-                    </h1>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="w-[80vw] h-[90vh] flex flex-row justify-start items-start gap-4">
-              <div className="w-1/3">
-                <form className="w-full flex flex-col items-start mt-8 text-md">
-                  <label htmlFor="userCountry" className="">
-                    Country Code. Example US: 1
-                  </label>
-                  <input name="userCountry" placeholder="1" className="mb-2" />
-                  <label htmlFor="userPhone" className="">
-                    Phone
-                  </label>
-                  <input
-                    name="userPhone"
-                    placeholder="xxx-xxx-xxxx"
-                    className="mb-2"
-                  />
-                  <label htmlFor="userEmail" className="">
-                    Email
-                  </label>
-                  <input name="userEmail" placeholder="user@email.com" />
-                  <label htmlFor="userPredefinedMessage1" className="mt-4">
-                    Message 01
-                  </label>
-                  <textarea
-                    name="userPredefinedMessage1"
-                    placeholder="type your message here..."
-                    style={{ border: "1px solid black", height: "15vh" }}
-                  />
-                  <div className="flex flex-row justify-end items-center mt-6">
-                    <button className="btn btn-primary rounded-md">
-                      Update
-                    </button>
-                  </div>
-                </form>
-              </div>
-              <div className="w-2/3">
-                <form className="w-full flex flex-col items-start mt-8 text-md">
-                  <label htmlFor="userCountry" className="">
-                    Country Code. Example US: 1
-                  </label>
-                  <input name="userCountry" placeholder="1" className="mb-2" />
-                  <label htmlFor="userPhone" className="">
-                    Phone
-                  </label>
-                  <input
-                    name="userPhone"
-                    placeholder="xxx-xxx-xxxx"
-                    className="mb-2"
-                  />
-                  <label htmlFor="userEmail" className="">
-                    Email
-                  </label>
-                  <input name="userEmail" placeholder="user@email.com" />
-                  <label htmlFor="userPredefinedMessage1" className="mt-4">
-                    Message 01
-                  </label>
-                  <textarea
-                    name="userPredefinedMessage1"
-                    placeholder="type your message here..."
-                    style={{ border: "1px solid black", height: "15vh" }}
-                  />
-                  <div className="flex flex-row justify-end items-center mt-6">
-                    <button className="btn btn-primary rounded-md">
-                      Update
-                    </button>
-                  </div>
-                </form>
               </div>
             </div>
           </div>
