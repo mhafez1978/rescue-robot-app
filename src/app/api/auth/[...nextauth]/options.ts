@@ -1,11 +1,26 @@
+import bcrypt from "bcrypt";
+import User from "@/database/models/User";
 import type { NextAuthOptions } from "next-auth";
 import GitHubProvider from "next-auth/providers/github";
 import { GithubProfile } from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
 import { GoogleProfile } from "next-auth/providers/google";
-import CredentialsProvider from "next-auth/providers/credentials";
 import { adminUsers } from "./users";
-import { NextRequest } from "next/server";
+import CredentialsProvider from "next-auth/providers/credentials";
+
+import sequelize from "@/database/sequelize";
+interface UserProps {
+  id: number | string;
+  name: string;
+  firstName: string;
+  lastName: string;
+  username: string;
+  email: string;
+  password: string;
+  role: string; // Additional fields that might be expected
+  phone: string;
+  image: string;
+}
 
 export const options: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
@@ -26,25 +41,26 @@ export const options: NextAuthOptions = {
         //console.log("#######################");
         const myuser = {
           id: profile.id.toString(),
-          login: profile?.login,
-          name: profile?.name,
-          email: profile?.email ?? "No email found on github",
+          username: profile?.login,
+          firstname: profile?.name?.split(" ")[0] ?? "No firstname found",
+          lastname: profile?.name?.split(" ")[1] ?? "No lastname found",
+          name: profile?.name ?? "No name found",
+          email: `${profile?.login}@gmail.com` ?? "No email found on github",
           image: profile?.avatar_url ?? "",
           role: userRole, // Default role
           phone: userPhone,
         };
-
-        console.log("##################");
         console.log(myuser);
-        console.log("##################");
         return {
-          ...profile,
-          id: profile.id.toString(),
-          name: profile?.name,
-          email: profile?.email ?? "No email found on github",
-          image: profile?.avatar_url ?? "",
-          role: userRole, // Default role
-          phone: (myuser.phone as string) ?? "No phone found", //Default phone
+          // ...profile,
+          // id: profile.id.toString(),
+          // name: profile?.name,
+          // email: profile?.email ?? "No email found on github",
+          // image: profile?.avatar_url ?? "",
+          // username: profile?.login,
+          // role: userRole, // Default role
+          // phone: (myuser.phone as string) ?? "No phone found", //Default phone
+          ...myuser,
         };
       },
       clientId: process.env.GITHUB_ID as string,
@@ -70,9 +86,12 @@ export const options: NextAuthOptions = {
             image: profile?.picture ?? "",
             role: "admin",
             phone: userPhone,
+            username: profile?.email?.split("@")[0] ?? "No username found",
+            firstname: profile?.name?.split(" ")[0] ?? "No firstname found",
+            lastname: profile?.name?.split(" ")[1] ?? "No lastname found",
           };
         }
-        console.log(profile);
+
         return {
           ...profile,
           id: profile.sub.substring(0, 5),
@@ -80,7 +99,10 @@ export const options: NextAuthOptions = {
           email: profile?.email ?? "No email found on google",
           image: profile?.picture ?? "",
           role: "user",
-          phone: userPhone ?? "No phone found",
+          phone: userPhone,
+          username: profile?.email?.split("@")[0] ?? "No username found",
+          firstname: profile?.name?.split(" ")[0] ?? "No firstname found",
+          lastname: profile?.name?.split(" ")[1] ?? "No lastname found",
         };
       },
       clientId: process.env.GOOGLE_ID as string,
@@ -96,32 +118,48 @@ export const options: NextAuthOptions = {
           placeholder: "password",
         },
       },
-      async authorize(credentials) {
-        // console.log(credentials);
+      async authorize(credentials, req) {
         try {
-          const user = adminUsers.find((user) => {
-            if (
-              (credentials?.username === user.name &&
-                credentials?.password === user.password) ||
-              (credentials?.username === user.email &&
-                credentials?.password === user.password)
-            ) {
-              return {
-                ...user,
-                image: `https://robohash.org/${encodeURIComponent(
-                  user.name
-                )}.png`,
-              };
-            }
+          if (!credentials.username || !credentials.password) {
+            return null;
+          }
+
+          const user = await User.findOne({
+            where: { username: credentials?.username },
           });
 
           if (!user) {
-            return null;
+            return null; // User not found
           }
-          return user;
+
+          // Check the password
+          const passwordMatch = await bcrypt.compare(
+            credentials.password,
+            user.password
+          );
+          if (!passwordMatch) {
+            console.log("passwords do not match");
+            return null; // Passwords do not match
+          }
+          console.log("passwords match");
+          // // Return user data without sensitive information
+          // q: can you chec my return statement
+
+          return {
+            ...user,
+            id: user.id.toString(),
+            username: user?.username,
+            firstname: user?.firstName,
+            lastname: user?.lastName,
+            name: user?.firstName + " " + user?.lastName ?? "app user",
+            email: user?.email ?? "No email found.",
+            image: user?.image ?? "",
+            role: user.role ?? "user",
+            phone: user.phone ?? "No phone found",
+          };
         } catch (error) {
           console.error("Error in authorization:", error);
-          return error;
+          return null;
         }
       },
     }),
@@ -137,6 +175,12 @@ export const options: NextAuthOptions = {
         token.role = user.role;
         token.sub = user.id;
         token.phone = user.phone;
+        token.name = user.name;
+        token.username = user.username;
+        token.firstname = user.firstname;
+        token.lastname = user.lastname;
+        token.email = user.email;
+        token.image = user.image;
       }
       return token;
     },
@@ -145,6 +189,12 @@ export const options: NextAuthOptions = {
     // to use roles in client components
     async session({ session, token }) {
       if (session?.user) {
+        session.user.firstname = token.firstname;
+        session.user.lastname = token.lastname;
+        session.user.username = token.username;
+        session.user.name = token.name;
+        session.user.email = token.email;
+        session.user.image = token.image;
         session.user.role = token.role;
         session.user.phone = token.phone;
         session.user.id = Number(token.sub);

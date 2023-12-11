@@ -1,0 +1,35 @@
+{
+  "firstname": "Ghada3",
+  "lastname": "Hafez3",
+  "username": "GhadaHafez3",
+  "email": "ghada3@hafez3.com",
+  "phone": "+1999887777",
+  "password": "123456789",
+  "role": "user",
+  "image": ""
+},
+
+
+{
+    "api/create/tables": "creates all tables", 
+    "api/create/table":"creates one table",
+    "api/delete/tables":"deletes all tables",
+    "api/delete/table":"deletes one table",
+    "api/add/user":"adds one user",
+    "apit/update/user":"modify one user",
+    "api/delete/user":"deletes one user",
+    "api/find/user":"finds one user",
+    "api/list/users":"lists all users",
+    "api/list/tables":"lists all tables",
+    "api/twilio/getNumber":"gets a twilio voice number",
+    "api/twilio/verifyNumber":"verifies a twilio voice number",
+    "api/twilio/incoming/list/all/sms":"lists all incoming sms",
+    "api/twilio/outgoing/list/all/sms":"lists all outgoing sms",
+    "api/twilio/list/all/sms":"all sms incoming and outgoing",
+    "api/twilio/filter/sms":"finds one sms",
+    "api/create/predefined/text":"creates one predefined text",
+    "api/modify/predefined/text":"modifies one predefined text",
+    "api/delete/predefined/text":"deletes one predefined text",
+    "api/list/all/predefined/text":"lists all predefined texts",
+
+}

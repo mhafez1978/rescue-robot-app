@@ -37,7 +37,7 @@ export default function GetIP() {
   return (
     <>
       {ipAddress.length > 0 ? (
-        <span className="text-red-500">{ipAddress}</span>
+        <span className="text-emerald-600">{ipAddress}</span>
       ) : (
         <span className="text-red-500">IP not found</span>
       )}

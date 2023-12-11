@@ -2,8 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
+input,
+select {
+  border: 1px solid green !important;
+  height: 54px;
+  padding-left: 5px;
+  color: blue;
+  border-radius: 14px;
+}
 input {
-  border: 2px solid gray !important;
+  padding: 4px 20px;
 }
 
 .btn {
@@ -14,4 +22,12 @@ input {
 .btn-primary {
   background-color: cornflowerblue;
   color: #fff;
+  height: 60px;
+  width: 300px;
+}
+.btn-danger {
+  background-color: red;
+  color: #fff;
+  height: 60px;
+  width: 300px;
 }

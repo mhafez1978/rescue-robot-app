@@ -9,16 +9,22 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "bcrypt": "^5.1.1",
+    "dotenv": "^16.3.1",
+    "mysql2": "^3.6.5",
     "next": "14.0.4",
     "next-auth": "^4.24.5",
     "preline": "^2.0.2",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "sequelize": "^6.35.1"
   },
   "devDependencies": {
-    "@types/node": "^20",
+    "@types/bcrypt": "^5.0.2",
+    "@types/node": "^20.10.4",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@types/sequelize": "^4.28.19",
     "autoprefixer": "^10.0.1",
     "eslint": "^8",
     "eslint-config-next": "14.0.4",
