@@ -8,6 +8,7 @@ enum UserRole {
 }
 
 interface User {
+  set(arg0: { lastName: string }): unknown;
   id: number;
   firstName: string;
   lastName: string;

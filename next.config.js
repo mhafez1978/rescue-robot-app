@@ -5,7 +5,7 @@ const nextConfig = {
   //       fullUrl: true,
   //     },
   //   },
-  mages: {
+  images: {
     domains: ["https://lh3.googleusercontent.com/"],
   },
 };
