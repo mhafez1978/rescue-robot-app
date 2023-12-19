@@ -159,79 +159,134 @@ export const options: NextAuthOptions = {
   //to help make roles presist on the server
   // we only need session if we doing a client component
   callbacks: {
-    async signIn({ user, account, profile, email, credentials }) {
-      // console.log("####################");
-      // console.log(user?.email);
-      // console.log(user?.name);
-      // console.log(user?.image);
-      // console.log(user?.role);
-      // console.log(user?.firstname);
-      // console.log(user?.lastname);
-      // console.log(user?.phone);
-      // console.log(account?.provider);
-      // console.log("####################");
+    async signIn({ user, account, credentials }) {
+      // if (account?.provider === "google" || account?.provider === "github") {
+      //   const foundUser = await User.findOne({
+      //     where: {
+      //       email: user.email,
+      //     },
+      //   }).then(async (foundUser) => {
+      //     if (foundUser) {
+      //       console.log("user already exists");
+      //       return true;
+      //     } else if (!foundUser) {
+      //       try {
+      //         const saltRounds = 10; // You can adjust the salt rounds as needed
+      //         const hashedPassword = await bcrypt.hash(user?.email, saltRounds);
+      //         //console.log("will start to create user");
+      //         await fetch("http://localhost:3000/api/users/create", {
+      //           method: "POST",
+      //           headers: {
+      //             "Content-Type": "application/json",
+      //           },
+      //           body: JSON.stringify({
+      //             firstname: user?.firstName,
+      //             lastname: user?.lastname,
+      //             username: user?.email,
+      //             email: user?.email,
+      //             phone: user?.phone,
+      //             password: hashedPassword,
+      //             role: user?.role,
+      //             image: user?.image,
+      //           }),
+      //         })
+      //           // .then((data) => data.json())
+      //           .then((results) => {
+      //             const data = results.json();
+      //             //console.log(data);
+      //             console.log(
+      //               "user creation should be done password for this user will be their firstname,username is email "
+      //             );
+      //             return true;
+      //           })
+      //           .catch((err) => {
+      //             console.log(err);
+      //             return false;
+      //           });
+      //       } catch (err) {
+      //         console.log(err);
+      //         return false;
+      //       }
+      //     }
+      //   });
+      // }
 
-      console.log(profile);
+      if (account?.provider === "google" || account?.provider === "github") {
+        try {
+          const foundUser = await User.findOne({
+            where: { email: user.email },
+          });
 
-      const foundUser = await User.findOne({
-        where: {
-          email: user.email,
-        },
-      });
+          if (foundUser) {
+            console.log("user already exists");
+            return true;
+          } else {
+            // Generate a secure password here instead of using the user's email
+            const saltRounds = 10;
+            const securePassword = user?.email; // Implement this function
+            const hashedPassword = await bcrypt.hash(
+              securePassword,
+              saltRounds
+            );
 
-      if (!foundUser) {
-        if (account?.provider === "google" || "github") {
-          try {
-            const saltRounds = 10; // You can adjust the salt rounds as needed
-            const hashedPassword = await bcrypt.hash(user?.email, saltRounds);
-            // console.log("##############");
-            // console.log(hashedPassword);
-            // console.log("##############");
-            console.log("will start to create user");
-            await fetch("http://localhost:3000/api/users/create", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                firstname: user?.firstName,
-                lastname: user?.lastname,
-                username: user?.email,
-                email: user?.email,
-                phone: user?.phone,
-                password: hashedPassword,
-                role: user?.role,
-                image: user?.image,
-              }),
-            })
-              // .then((data) => data.json())
-              .then((results) => {
-                const data = results.json();
-                console.log(data);
-                console.log(
-                  "user creation should be done password for this user will be their firstname,username is email "
-                );
-                return true;
-              })
-              .catch((err) => {
-                console.log(err);
-                return false;
-              });
-          } catch (err) {
-            console.log(err);
-            return false;
+            const response = await fetch(
+              "http://localhost:3000/api/users/create",
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  firstname: user?.firstName,
+                  lastname: user?.lastname,
+                  username: user?.email,
+                  email: user?.email,
+                  phone: user?.phone,
+                  password: hashedPassword,
+                  role: user?.role,
+                  image: user?.image,
+                }),
+              }
+            );
+
+            if (response.ok) {
+              console.log("User creation successful");
+              return true;
+            } else {
+              console.log("Failed to create user");
+              return false;
+            }
           }
-        } else if (account?.provider === "credentials") {
-          return true;
+        } catch (err) {
+          console.log(err);
+          return false;
         }
       }
-      // if user is found just login
-      // return true to allow in
-      return true;
+
+      if (account?.provider === "credentials") {
+        const appUser = await User.findOne({
+          where: {
+            username: credentials?.username,
+          },
+        });
+
+        if (!appUser) {
+          console.log("user does not exist");
+          return false;
+        }
+
+        const checkPassword = await bcrypt.compare(
+          credentials?.password,
+          appUser?.password
+        );
+        if (!checkPassword) {
+          console.log("passwords do not match");
+          return false;
+        }
+
+        console.log("user exists and passwords match");
+        return true;
+      }
     },
 
-    // server handling
-    // to use roles in server components
     async jwt({ token, user }) {
       if (user) {
         //console.log(token.sub)
