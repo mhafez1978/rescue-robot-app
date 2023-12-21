@@ -46,20 +46,27 @@ const ProfileUpdateForm = ({ memberObj }: any) => {
 
   const handleNewDataChange = (e) => {
     e.preventDefault();
-    if (e.currentTarget.name === "lastname") {
-      setNewLastName(e.currentTarget.value);
-      console.log(newLastName);
-      setNewFullName(session?.user?.firstname + " " + newLastName);
-      console.log(newFullName);
-    } else if (e.currentTarget.name === "email") {
-      setNewEmailAddress(e.currentTarget.value);
-      console.log(newEmailAddress);
-    } else if (e.currentTarget.name === "phone") {
-      setNewPhoneNumber(e.target.value);
-      console.log(newPhoneNumber);
-    } else if (e.currentTarget.name === "profile_image") {
-      setNewProfileImage(e.target.value);
-      console.log(newProfileImage);
+    console.log(session?.user.firstname);
+    if (session) {
+      // console.log(session?.user.firstname);
+      if (e.currentTarget.name === "lastname") {
+        setNewLastName(e.currentTarget.value);
+        //console.log(newLastName);
+        setNewFullName(session?.user.firstname + " " + newLastName);
+        console.log(newFullName);
+      } else if (e.currentTarget.name === "email") {
+        setNewEmailAddress(e.currentTarget.value);
+        console.log(newEmailAddress);
+      } else if (e.currentTarget.name === "phone") {
+        setNewPhoneNumber(e.target.value);
+        console.log(newPhoneNumber);
+      } else if (e.currentTarget.name === "profile_image") {
+        setNewProfileImage(e.target.value);
+        console.log(newProfileImage);
+      }
+    }
+    if (!session) {
+      return;
     }
   };
 
@@ -100,23 +107,6 @@ const ProfileUpdateForm = ({ memberObj }: any) => {
       console.log("please enter a valid name ...");
       return;
     }
-
-    // if (newPhoneNumber.length > 0) {
-    //   if (!isValidPhoneNumber(newPhoneNumber)) {
-    //     console.log("not valid number ...");
-    //     setPhoneErrorMessage(true);
-    //     return;
-    //   }
-    //   userData.phone = newPhoneNumber;
-    // }
-
-    //  if (newLastName.length === 0) {
-    //    userData.lastname = session?.user?.lastname as string;
-    //  }
-
-    // if (newPhoneNumber.length === 0) {
-    //   userData.phone = session?.user?.phone as string;
-    // }
 
     if (!isValidateEmail) {
       console.log("this is not valid email ...");
@@ -167,15 +157,18 @@ const ProfileUpdateForm = ({ memberObj }: any) => {
       const id = session?.user?.id;
       console.log(id);
       try {
-        const response = await fetch(`/api/users/update/user/${id}`, {
-          method: "PUT",
-          body: JSON.stringify({
-            newLastName: newLastName,
-            newEmailAddress: newEmailAddress,
-            newPhoneNumber: newPhoneNumber,
-            newProfileImage: newProfileImage,
-          }),
-        });
+        const response = await fetch(
+          `http://localhost:3000/api/users/update/user/${id}`,
+          {
+            method: "PUT",
+            body: JSON.stringify({
+              newLastName: newLastName,
+              newEmailAddress: newEmailAddress,
+              newPhoneNumber: newPhoneNumber,
+              newProfileImage: newProfileImage,
+            }),
+          }
+        );
 
         if (!response.ok) {
           throw new Error("Failed to update user");
@@ -249,8 +242,8 @@ const ProfileUpdateForm = ({ memberObj }: any) => {
     console.log(session);
     return (
       <>
-        <div className="w-[80vw] flex flex-col px-8">
-          <div className="w-[60vw]">
+        <div className="flex flex-col px-8">
+          <div className="">
             <h3 className="text-black font-semibold text-lg">
               Update your profile details
             </h3>

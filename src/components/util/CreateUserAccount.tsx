@@ -4,9 +4,11 @@ import { FormEvent } from "react";
 import Toast from "@/components/Toast";
 import InProgressToast from "@/components/InProgressToast";
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 
 const CreateUserAccount: React.FC = () => {
-  let [userPhone, setUserPhone] = useState("");
+  const router = useRouter();
+  let [userPhone, setUserPhone] = useState(null);
   const [firstname, setFirstName] = useState("");
   const [lastname, setLastName] = useState("");
   const [email, setUserEmail] = useState("");
@@ -15,7 +17,7 @@ const CreateUserAccount: React.FC = () => {
   const [name, setName] = useState(firstname + " " + lastname);
   const [username, setUsername] = useState("");
   const [profileImage, setProfileImage] = useState("");
-  const [userRole, setUserRole] = useState("");
+  const [userRole, setUserRole] = useState(["user", "admin"]);
   const [missingField, setMissingField] = useState(false);
   const [passwordsMatch, setPasswordsMatch] = useState(true);
   const [validPhoneNumber, setValidPhoneNumber] = useState("yes");
@@ -26,11 +28,11 @@ const CreateUserAccount: React.FC = () => {
     if (e.currentTarget.name === "first_name") {
       setFirstName(e.currentTarget.value);
       console.log(firstname);
-      setName(e.currentTarget.value + " " + lastname);
+      setName(firstname + " " + lastname);
     } else if (e.currentTarget.name === "last_name") {
       setLastName(e.currentTarget.value);
       console.log(lastname);
-      setName(firstname + " " + e.currentTarget.value);
+      setName(firstname + " " + lastname);
     } else if (e.currentTarget.name === "email") {
       setUserEmail(e.currentTarget.value);
       console.log(email);
@@ -102,7 +104,7 @@ const CreateUserAccount: React.FC = () => {
     }
 
     try {
-      const newUser = await fetch("/api/users/create", {
+      const newUser = await fetch("http://localhost:3000/api/users/create", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -123,6 +125,7 @@ const CreateUserAccount: React.FC = () => {
           console.log(data);
           setUserCreated(true);
           setActionStarted(false);
+          router.refresh();
           return data;
         });
     } catch (error) {
@@ -149,7 +152,7 @@ const CreateUserAccount: React.FC = () => {
   return (
     <>
       <h2 className="text-3xl">
-        <em>Update your profile details here ...</em>
+        <em>Add A New User</em>
       </h2>
       <form
         onSubmit={handleSubmit}
@@ -347,6 +350,12 @@ const CreateUserAccount: React.FC = () => {
         <div className="flex flex-row justify-between">
           <button className="brn btn-primary" type="submit">
             Save
+          </button>
+          <button
+            className="brn btn-grey"
+            onClick={() => document.getElementById("my_modal_3").close()}
+          >
+            Close
           </button>
           <button
             type="reset"

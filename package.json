@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@preline/overlay": "^2.0.1",
     "bcrypt": "^5.1.1",
     "clsx": "^2.0.0",
     "dotenv": "^16.3.1",
@@ -27,6 +28,7 @@
     "@types/react-dom": "^18",
     "@types/sequelize": "^4.28.19",
     "autoprefixer": "^10.0.1",
+    "daisyui": "^4.4.23",
     "eslint": "^8",
     "eslint-config-next": "14.0.4",
     "postcss": "^8",

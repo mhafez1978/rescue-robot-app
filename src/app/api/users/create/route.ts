@@ -27,8 +27,8 @@ export async function POST(request: Request) {
 
     // Create a new user in the database
     const newUser = await User.create({
-      firstName: firstname,
-      lastName: lastname,
+      firstname: firstname,
+      lastname: lastname,
       username: username,
       fullname: firstname + " " + lastname,
       email: email,

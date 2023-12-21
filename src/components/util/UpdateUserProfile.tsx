@@ -58,7 +58,7 @@ const UpdateUserProfile: React.FC = () => {
     }
   };
 
-  const isValidPhoneNumber = (userPhone) => {
+  const isValidPhoneNumber = (userPhone: any) => {
     // This is a basic pattern and might need to be adjusted based on your specific requirements
     const pattern = /^\+?\d{1,3}[-\s]?\d{3}[-\s]?\d{3}[-\s]?\d{4}$/;
     const results = pattern.test(userPhone);
@@ -102,7 +102,7 @@ const UpdateUserProfile: React.FC = () => {
     }
 
     try {
-      const newUser = await fetch("/api/users/create", {
+      const newUser = await fetch("http://localhost:3000/api/users/create", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

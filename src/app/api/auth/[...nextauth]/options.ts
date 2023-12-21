@@ -14,11 +14,10 @@ declare module "next-auth" {
     name: string;
     firstname: string;
     lastname: string;
-    firstName: string;
-    lastName: string;
+    password: string;
     username: string;
     email: string;
-    role: string; // Additional fields that might be expected
+    role: string;
     phone: string;
     image: string;
   }
@@ -41,8 +40,6 @@ export const options: NextAuthOptions = {
         const myuser = {
           id: profile.id,
           username: profile?.login,
-          firstName: profile?.name?.split(" ")[0] ?? "No firstname found",
-          lastName: profile?.name?.split(" ")[1] ?? "No lastname found",
           firstname: profile?.name?.split(" ")[0] ?? "No firstname found",
           lastname: profile?.name?.split(" ")[1] ?? "No lastname found",
           name: profile?.name ?? "No name found",
@@ -64,6 +61,7 @@ export const options: NextAuthOptions = {
       profile(profile: GoogleProfile) {
         //console.log(profile);
         const adminPhone = process.env.AdminPhone as string;
+
         if (profile?.email === process.env.Admin_Email) {
           profile.phone === adminPhone;
 
@@ -76,8 +74,6 @@ export const options: NextAuthOptions = {
             role: "admin",
             phone: adminPhone,
             username: profile?.email?.split("@")[0] ?? "No username found",
-            firstName: profile?.name?.split(" ")[0] ?? "No firstname found",
-            lastName: profile?.name?.split(" ")[1] ?? "No lastname found",
             firstname: profile?.name?.split(" ")[0] ?? "No firstname found",
             lastname: profile?.name?.split(" ")[1] ?? "No lastname found",
           };
@@ -94,8 +90,6 @@ export const options: NextAuthOptions = {
           username: profile?.email?.split("@")[0] ?? "No username found",
           firstname: profile?.name?.split(" ")[0] ?? "No firstname found",
           lastname: profile?.name?.split(" ")[1] ?? "No lastname found",
-          firstName: profile?.name?.split(" ")[0] ?? "No firstname found",
-          lastName: profile?.name?.split(" ")[1] ?? "No lastname found",
         };
       },
       clientId: process.env.GOOGLE_ID as string,
@@ -141,9 +135,9 @@ export const options: NextAuthOptions = {
             ...user,
             id: user?.id,
             username: user?.username,
-            firstname: user?.firstName,
-            lastname: user?.lastName,
-            name: user?.firstName + " " + user?.lastName ?? "app user",
+            firstname: user?.firstname,
+            lastname: user?.lastname,
+            name: user?.firstname + " " + user?.lastname ?? "app user",
             email: user?.email ?? "No email found.",
             image: user?.image ?? "",
             role: user.role ?? "user",
@@ -160,57 +154,7 @@ export const options: NextAuthOptions = {
   // we only need session if we doing a client component
   callbacks: {
     async signIn({ user, account, credentials }) {
-      // if (account?.provider === "google" || account?.provider === "github") {
-      //   const foundUser = await User.findOne({
-      //     where: {
-      //       email: user.email,
-      //     },
-      //   }).then(async (foundUser) => {
-      //     if (foundUser) {
-      //       console.log("user already exists");
-      //       return true;
-      //     } else if (!foundUser) {
-      //       try {
-      //         const saltRounds = 10; // You can adjust the salt rounds as needed
-      //         const hashedPassword = await bcrypt.hash(user?.email, saltRounds);
-      //         //console.log("will start to create user");
-      //         await fetch("http://localhost:3000/api/users/create", {
-      //           method: "POST",
-      //           headers: {
-      //             "Content-Type": "application/json",
-      //           },
-      //           body: JSON.stringify({
-      //             firstname: user?.firstName,
-      //             lastname: user?.lastname,
-      //             username: user?.email,
-      //             email: user?.email,
-      //             phone: user?.phone,
-      //             password: hashedPassword,
-      //             role: user?.role,
-      //             image: user?.image,
-      //           }),
-      //         })
-      //           // .then((data) => data.json())
-      //           .then((results) => {
-      //             const data = results.json();
-      //             //console.log(data);
-      //             console.log(
-      //               "user creation should be done password for this user will be their firstname,username is email "
-      //             );
-      //             return true;
-      //           })
-      //           .catch((err) => {
-      //             console.log(err);
-      //             return false;
-      //           });
-      //       } catch (err) {
-      //         console.log(err);
-      //         return false;
-      //       }
-      //     }
-      //   });
-      // }
-
+      console.log(user);
       if (account?.provider === "google" || account?.provider === "github") {
         try {
           const foundUser = await User.findOne({
@@ -235,7 +179,7 @@ export const options: NextAuthOptions = {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                  firstname: user?.firstName,
+                  firstname: user?.firstname,
                   lastname: user?.lastname,
                   username: user?.email,
                   email: user?.email,

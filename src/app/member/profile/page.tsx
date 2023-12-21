@@ -24,8 +24,9 @@ const MemberProfile = async () => {
       // console.log("##############myUser########");
       // console.log(myUser.id);
       memberObj = myUser;
-      console.log(memberObj.dataValues.firstName);
+      console.log(memberObj.dataValues.firstname);
     }
+
     return (
       <>
         <div className="w-[100vw] h-[100vh] top-0 bottom-0 flex flex-row gap-x-4">
@@ -72,7 +73,7 @@ const MemberProfile = async () => {
                         <h2>
                           Welcome,{" "}
                           <span className="text-emerald-600 capitalize">
-                            {memberObj.dataValues.firstName}
+                            {memberObj.dataValues.firstname}
                           </span>
                         </h2>
                       </div>
@@ -226,101 +227,7 @@ const MemberProfile = async () => {
                 </div>
               </div>
             </div>
-
-            {/* <div className="w-[80vw] flex flex-col px-8">
-              <div className="w-[60vw]">
-                <h3 className="text-black font-semibold text-lg">
-                  Update your profile details
-                </h3>
-                <br />
-                <form className="flex flex-col gap-2">
-                  <label htmlFor="firstname">First Name:</label>
-                  <input
-                    type="text"
-                    name="firstname"
-                    placeholder={session.user?.firstname}
-                    disabled
-                  />
-                  <label htmlFor="firstname">
-                    Last Name:{" "}
-                    <span className="text-sm text-orange-700">
-                      Unlock to modify
-                    </span>
-                  </label>
-                  <input
-                    type="text"
-                    name="lastname"
-                    placeholder={session.user?.lastname}
-                  />
-                  <label htmlFor="name">Full Name:</label>
-                  <input
-                    type="text"
-                    name="name"
-                    placeholder={
-                      session.user?.firstname + " " + session.user?.lastname
-                    }
-                    disabled
-                  />
-                  <label htmlFor="name">Username:</label>
-                  <input
-                    type="text"
-                    name="username"
-                    placeholder={session.user?.username}
-                    disabled
-                  />
-                  <label htmlFor="name">
-                    Email:{" "}
-                    <span className="text-sm text-orange-700">
-                      Unlock to modify
-                    </span>
-                  </label>
-                  <input
-                    type="text"
-                    name="username"
-                    placeholder={session.user?.email}
-                  />
-                  <label htmlFor="name">
-                    Phone:{" "}
-                    <span className="text-xs text-orange-700">
-                      Unlock to modify
-                    </span>
-                  </label>
-                  <input
-                    type="text"
-                    name="phone"
-                    placeholder={session.user?.phone}
-                  />
-                  <label htmlFor="name">
-                    Profile Image URL:{" "}
-                    <span className="text-sm text-orange-700">
-                      Unlock to modify
-                    </span>
-                  </label>
-                  <input
-                    type="text"
-                    name="username"
-                    placeholder={
-                      session.user?.image.length === 0
-                        ? "Not set ..."
-                        : session.user?.image
-                    }
-                  />
-                  <div className="mt-2 mb-2">
-                    in progress or updated successully
-                  </div>
-                  <div className="flex flex-row justify-between mt-4 mb-12">
-                    <button className="btn btn-primary rounded-md">
-                      Update
-                    </button>
-                    <button className="btn btn-danger rounded-md">
-                      Unlock
-                    </button>
-                  </div>
-                </form>
-              </div>
-            </div> */}
-            <ProfileUpdateForm />
-            {/* <UpdateUserProfile /> */}
+            <ProfileUpdateForm memberObj={memberObj} />
           </div>
         </div>
       </>

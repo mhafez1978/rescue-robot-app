@@ -13,7 +13,7 @@ export async function PUT(request: Request) {
 }
 export async function DELETE(request: Request) {
   try {
-    await sequelize.drop();
+    await User.drop();
     console.log("All tables dropped!");
     return Response.json({ message: "We dropped all tables ok ...!" });
   } catch (error) {

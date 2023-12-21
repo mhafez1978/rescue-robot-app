@@ -28,7 +28,7 @@ export async function PUT(req: Request) {
   }
 
   if (newLastName === "") {
-    newLastName = findUser.lastName;
+    newLastName = findUser.lastname;
   }
 
   if (newEmailAddress === "") {
@@ -43,8 +43,8 @@ export async function PUT(req: Request) {
     newUserImage = findUser.image;
   }
 
-  findUser.lastName = newLastName;
-  findUser.fullname = findUser.firstName + " " + newLastName;
+  findUser.lastname = newLastName;
+  findUser.fullname = findUser.firstname + " " + newLastName;
   findUser.email = newEmailAddress;
   findUser.phone = newPhoneNumber;
   findUser.image = newUserImage;
@@ -53,3 +53,7 @@ export async function PUT(req: Request) {
 
   return Response.json(findUser);
 }
+
+// api route here is :
+// API HTTP Method: PUT
+// http://localhost:3000/api/users/update/user/${id}

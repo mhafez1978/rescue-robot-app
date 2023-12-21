@@ -3,8 +3,8 @@ import sequelize from "@/database/sequelize";
 
 export async function POST(request: Request) {
   try {
-    //await User.sync({ force: true });
-    await sequelize.sync({ force: true });
+    //await sequelize.sync({ force: true });
+    await User.sync({ force: true });
     // more models or tables can be synced here as long as you import them on the top
     console.log("The table for the User model was just (re)created!");
     return Response.json({

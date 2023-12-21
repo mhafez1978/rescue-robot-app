@@ -15,6 +15,6 @@ const config: Config = {
       },
     },
   },
-  plugins: [require("preline/plugin")],
+  plugins: [require("preline/plugin"), require("daisyui")],
 };
 export default config;

@@ -8,11 +8,11 @@ enum UserRole {
 }
 
 interface User {
-  set(arg0: { lastName: string }): unknown;
+  set(arg0: { lastname: string }): unknown;
   id: number;
-  firstName: string;
-  lastName: string;
-  fullname: string;
+  firstname: string;
+  lastname: string;
+  name: string;
   username: string;
   password: string;
   email: string;
@@ -29,11 +29,11 @@ const User = sequelize.define(
       autoIncrement: true,
       primaryKey: true,
     },
-    firstName: {
+    firstname: {
       type: new DataTypes.STRING(128),
       allowNull: false,
     },
-    lastName: {
+    lastname: {
       type: new DataTypes.STRING(128),
       allowNull: true,
     },
@@ -58,7 +58,7 @@ const User = sequelize.define(
     phone: {
       type: new DataTypes.STRING(128),
       allowNull: true,
-      unique: true,
+      unique: false,
     },
     role: {
       type: DataTypes.ENUM,

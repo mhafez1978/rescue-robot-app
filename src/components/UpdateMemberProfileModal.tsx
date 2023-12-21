@@ -1,13 +1,39 @@
 "use client";
+
 import React, { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
+import User from "@/database/models/User";
 
-const UpdateMemberProfileModal = () => {
+const UpdateMemberProfileModal = ({ id }: any) => {
   const { data: session } = useSession();
   const [newlastname, setNewlastname] = useState("");
   const [newemail, setNewEmail] = useState("");
   const [newphonenumber, setNewphonenumber] = useState("");
   const [newimage, setNewimage] = useState("");
+  const [userData, setUserData] = useState({
+    firstname: "",
+    lastname: "",
+    email: "",
+    phone: "",
+    image: "",
+  });
+
+  const getUser = async () => {
+    const user = await fetch(
+      `http://localhost:3000/api/users/update/user/${id}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    if (user) {
+      setUserData(user);
+    }
+  };
+
+  getUser();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.currentTarget.name === "lastname") {
@@ -25,7 +51,7 @@ const UpdateMemberProfileModal = () => {
     }
   };
 
-  if (session) {
+  if (session && session.user?.role === "admin") {
     return (
       <>
         <button
@@ -59,9 +85,9 @@ const UpdateMemberProfileModal = () => {
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                   >
                     <path d="M18 6 6 18" />
                     <path d="m6 6 12 12" />
@@ -79,7 +105,8 @@ const UpdateMemberProfileModal = () => {
                     <input
                       type="text"
                       name="firstname"
-                      placeholder={session.user?.firstname}
+                      value={userData?.firstname}
+                      placeholder={userData?.firstname}
                       disabled
                     />
                     <label htmlFor="lastname">
@@ -91,7 +118,7 @@ const UpdateMemberProfileModal = () => {
                     <input
                       type="text"
                       name="lastname"
-                      placeholder={session.user?.lastname}
+                      placeholder={userData?.lastname}
                       onChange={handleChange}
                       value={newlastname}
                     />
@@ -99,9 +126,7 @@ const UpdateMemberProfileModal = () => {
                     <input
                       type="text"
                       name="name"
-                      placeholder={
-                        session.user?.firstname + " " + session.user?.lastname
-                      }
+                      placeholder={userData?.firstname + " " + newlastname}
                       disabled
                     />
                     <label htmlFor="email">
@@ -113,7 +138,7 @@ const UpdateMemberProfileModal = () => {
                     <input
                       type="text"
                       name="username"
-                      placeholder={session.user?.email}
+                      placeholder={userData?.email}
                       onChange={handleChange}
                       value={newemail}
                     />
@@ -126,7 +151,7 @@ const UpdateMemberProfileModal = () => {
                     <input
                       type="text"
                       name="phone"
-                      placeholder={session.user?.phone}
+                      placeholder={userData?.phone}
                       onChange={handleChange}
                       value={newphonenumber}
                     />
@@ -140,16 +165,14 @@ const UpdateMemberProfileModal = () => {
                       type="text"
                       name="profile_image"
                       placeholder={
-                        session.user?.image.length === 0
-                          ? "Not set ..."
-                          : session.user?.image
+                        userData?.image === "" ? "Not set ..." : userData?.image
                       }
                       onChange={handleChange}
                       value={newimage}
                     />
                     <div className="flex flex-row justify-between mt-4 mb-12">
                       <button className="btn btn-secondary rounded-md">
-                        Save
+                        Unlock
                       </button>
 
                       <button className="btn btn-grey rounded-md">
