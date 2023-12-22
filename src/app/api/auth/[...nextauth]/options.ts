@@ -154,7 +154,6 @@ export const options: NextAuthOptions = {
   // we only need session if we doing a client component
   callbacks: {
     async signIn({ user, account, credentials }) {
-      console.log(user);
       if (account?.provider === "google" || account?.provider === "github") {
         try {
           const foundUser = await User.findOne({

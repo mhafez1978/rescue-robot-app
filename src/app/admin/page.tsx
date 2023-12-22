@@ -196,7 +196,7 @@ const AdminPage = async () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {users.map((user, index) => (
+                    {users.map((user: any, index: number) => (
                       <tr
                         key={user.id}
                         className={`bg-white border-b border-gray-200 hover:bg-gray-50 ${
