@@ -2,9 +2,7 @@ import bcrypt from "bcrypt";
 import User from "@/database/models/User";
 import type { NextAuthOptions } from "next-auth";
 import GitHubProvider from "next-auth/providers/github";
-import { GithubProfile } from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
-import { GoogleProfile } from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import NextAuth from "next-auth";
 
@@ -27,7 +25,7 @@ export const options: NextAuthOptions = {
   providers: [
     GitHubProvider({
       name: "Github",
-      profile(profile: GithubProfile) {
+      profile(profile) {
         //console.log(profile);
         let userRole = "user" as string;
         let userPhone = "" as string;
@@ -58,7 +56,7 @@ export const options: NextAuthOptions = {
     }),
     GoogleProvider({
       name: "Google",
-      profile(profile: GoogleProfile) {
+      profile(profile) {
         //console.log(profile);
         const adminPhone = process.env.AdminPhone as string;
 
@@ -217,8 +215,8 @@ export const options: NextAuthOptions = {
         }
 
         const checkPassword = await bcrypt.compare(
-          credentials?.password,
-          appUser?.password
+          credentials?.password as string,
+          appUser.getDataValue("password")
         );
         if (!checkPassword) {
           console.log("passwords do not match");

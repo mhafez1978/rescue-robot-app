@@ -19,7 +19,7 @@ const UpdateMemberProfileModal = ({ id }: any) => {
   });
 
   const getUser = async () => {
-    const user = await fetch(
+    const user: any = await fetch(
       `http://localhost:3000/api/users/update/user/${id}`,
       {
         method: "POST",

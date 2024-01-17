@@ -10,6 +10,7 @@ import CheckBox from "@/components/util/CheckBox";
 
 const AdminPage = async () => {
   const session = await getServerSession(options);
+
   let checked = false;
   const data = await fetch("http://localhost:3000/api/users/list/all", {
     method: "POST",

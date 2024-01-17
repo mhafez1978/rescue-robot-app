@@ -13,6 +13,12 @@ input {
   padding: 4px 20px;
 }
 
+footer {
+  width: 100%;
+  position: fixed;
+  bottom: 0;
+}
+
 .btn {
   border: 1px solid black;
   padding: 10px 40px;
