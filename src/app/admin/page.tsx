@@ -9,91 +9,21 @@ import AddNewUserModalForm from "@/components/AddNewUserModalForm";
 import CheckBox from "@/components/util/CheckBox";
 
 const AdminPage = async () => {
-  const session = await getServerSession(options);
+  let users = [];
 
-  let checked = false;
-  const data = await fetch("http://localhost:3000/api/users/list/all", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
+  let session = await getServerSession(options);
 
-  // const handleChecked = (e: any) => {
-  //   e.preventDefault();
-  //   checked = !checked;
-  //   console.log(checked);
-  // };
+  if (session && session.user?.role === "admin") {
+    console.log("condition admin role verified ....");
+    const response = await fetch("http://localhost:3000/api/users/list/all", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
 
-  const users = await data.json();
+    users = await response.json();
 
-  if (!session) {
-    redirect("/api/auth/signin?callbackUrl=/member/profile");
-  }
-  if (session.user?.role !== "admin") {
-    //console.log(session.user?.myuser?.phone)
-
-    return (
-      <>
-        <div className="w-[100vw] h-[100vh] top-0 bottom-0 flex flex-row gap-x-4">
-          <div className="w-[20vw] h-[100vh] bg-slate-600 fixed top-0 bottom-0 text-slate-50">
-            <div className="flex flex-col px-8 pt-[20vh] gap-y-2">
-              <a href="/member/profile">Profile</a>
-              <a href="/member/settings">Settings</a>
-              <hr className="divider" />
-              <a href="/api/auth/signout?callbackUrl=/">Logout</a>
-            </div>
-          </div>
-          <div className="w-[80vw] ml-[21vw] pt-[5vh]">
-            <div className="flex flex-col justify-center items-start">
-              <div className="w-full flex flex-row justify-between">
-                <div className="w-1/2 flex flex-col">
-                  <h1>Oops, sorry.</h1>
-                  <h2 className="text-red-600 font-semibold text-2xl">
-                    <em>Admin Access Is Not Allowed</em>
-                  </h2>
-                </div>
-              </div>
-            </div>
-            <div className="w-[80vw] mr-10 mt-12">
-              <div className="px-2">
-                <div className="w-1/2">
-                  <div className="">
-                    <h3>
-                      Hello,{" "}
-                      <span className="capitalize text-emerald-600">
-                        {session.user?.name}
-                      </span>{" "}
-                    </h3>
-
-                    <p className="w-[70%]">
-                      <br />
-                      You&apos;re assigned access role is set to:{" "}
-                      <span className="capitalize text-red-600">
-                        {" "}
-                        Standard {session.user?.role}
-                      </span>{" "}
-                      if you think this is a mistake, please contact tech
-                      support : +1 978 888 7688.
-                      <br />
-                      <br />
-                      <span className="text-red-600">
-                        Error: ADMIN_ACCESS_401_UNAUTHORIZED.
-                      </span>
-                    </p>
-                    <p className="mt-4">
-                      Your current tracked IP Address is: <GetIP />
-                    </p>
-                    <BackBtn />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </>
-    );
-  } else {
     return (
       <>
         <div className="w-[100vw] h-[100vh] top-0 bottom-0 flex flex-row gap-x-4">
@@ -238,7 +168,70 @@ const AdminPage = async () => {
         </div>
       </>
     );
+  } else if (session.user?.role !== "admin") {
+    console.log(session);
+    return (
+      <>
+        <div className="w-[100vw] h-[100vh] top-0 bottom-0 flex flex-row gap-x-4">
+          <div className="w-[20vw] h-[100vh] bg-slate-600 fixed top-0 bottom-0 text-slate-50">
+            <div className="flex flex-col px-8 pt-[20vh] gap-y-2">
+              <a href="/member/profile">Profile</a>
+              <a href="/member/settings">Settings</a>
+              <hr className="divider" />
+              <a href="/api/auth/signout?callbackUrl=/">Logout</a>
+            </div>
+          </div>
+          <div className="w-[80vw] ml-[21vw] pt-[5vh]">
+            <div className="flex flex-col justify-center items-start">
+              <div className="w-full flex flex-row justify-between">
+                <div className="w-1/2 flex flex-col">
+                  <h1>Oops, sorry.</h1>
+                  <h2 className="text-red-600 font-semibold text-2xl">
+                    <em>Admin Access Is Not Allowed</em>
+                  </h2>
+                </div>
+              </div>
+            </div>
+            <div className="w-[80vw] mr-10 mt-12">
+              <div className="px-2">
+                <div className="w-1/2">
+                  <div className="">
+                    <h3>
+                      Hello,{" "}
+                      <span className="capitalize text-emerald-600">
+                        {session.user?.name}
+                      </span>{" "}
+                    </h3>
+
+                    <p className="w-[70%]">
+                      <br />
+                      You&apos;re assigned access role is set to:{" "}
+                      <span className="capitalize text-red-600">
+                        {" "}
+                        Standard {session.user?.role}
+                      </span>{" "}
+                      if you think this is a mistake, please contact tech
+                      support : +1 978 888 7688.
+                      <br />
+                      <br />
+                      <span className="text-red-600">
+                        Error: ADMIN_ACCESS_401_UNAUTHORIZED.
+                      </span>
+                    </p>
+                    <p className="mt-4">
+                      Your current tracked IP Address is: <GetIP />
+                    </p>
+                    <BackBtn />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </>
+    );
   }
+  console.log(session);
 };
 
 export default AdminPage;

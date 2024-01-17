@@ -25,7 +25,7 @@ export const options: NextAuthOptions = {
   providers: [
     GitHubProvider({
       name: "Github",
-      profile(profile) {
+      profile(profile, tokens) {
         //console.log(profile);
         let userRole = "user" as string;
         let userPhone = "" as string;
@@ -35,7 +35,7 @@ export const options: NextAuthOptions = {
           userPhone = "+19788887688";
         }
 
-        const myuser = {
+        const myuser: User = {
           id: profile.id,
           username: profile?.login,
           firstname: profile?.name?.split(" ")[0] ?? "No firstname found",
@@ -45,11 +45,11 @@ export const options: NextAuthOptions = {
           image: profile?.avatar_url ?? "",
           role: userRole, // Default role
           phone: userPhone,
+          password: "", // Add password property
+          passsword: "", // Add passsword property
         };
         //console.log(myuser);
-        return {
-          ...myuser,
-        };
+        return myuser;
       },
       clientId: process.env.GITHUB_ID as string,
       clientSecret: process.env.GITHUB_SECRET as string,
@@ -138,7 +138,7 @@ export const options: NextAuthOptions = {
             name: user?.firstname + " " + user?.lastname ?? "app user",
             email: user?.email ?? "No email found.",
             image: user?.image ?? "",
-            role: user.role ?? "user",
+            role: user.role,
             phone: user.phone ?? "No phone found",
           } as any;
         } catch (error) {
